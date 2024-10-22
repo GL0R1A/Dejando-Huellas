@@ -189,14 +189,15 @@ async function obtenerYEnviarRecordatorios() {
 // Tarea programada para ejecutarse todos los días a las 00:00
 
 cron.schedule('0 22 * * *', () => {
-  console.log('Ejecutando tarea diaria a las 4:00 PM ');
+  console.log('Ejecutando tarea diaria a las 4:00 PM');
   obtenerYEnviarRecordatorios(); // Llamar a la función que obtiene y envía los correos
 });
 
 // Iniciar servidor
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 const fecha = new Date();
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
   console.log(fecha)
-});
+})
+;
