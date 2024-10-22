@@ -168,7 +168,7 @@ async function obtenerYEnviarRecordatorios() {
       }
 
   } catch (error) {
-      console.error('Error al obtener o enviar recordatorios:', error);
+      console.error(`Error al obtener o enviar recordatorios: ${api_url}`, error);
   }
 }
 
