@@ -15,10 +15,12 @@ router.get('/Propietarios/id/:usuario_id', registroController.getPropietarioById
 router.get('/mascotas/especies', mascotaController.getEspeciesAll);
 router.get('/mascotas/generos', mascotaController.getGenerosAll);
 
+
 router.get('/mascotas/vacunas/imprimir/:mascota_id', reportesController.getReporteImprimir);
 
 router.get('/infoqr/:identificador_qr', mascotaController.getMascotabyQr);
 router.get('/mascotas/vacunas/:mascota_id', mascotaController.getVacunacion);
+router.get('/mascotas/recordatorio', mascotaController.getRecordatorioVacunas);
 
 router.delete('/mascotas/vacunas/:id_vacunacion', mascotaController.deleteVacunacion);
 router.put('/mascotas/vacunas/update/:id_vacunacion', mascotaController.updateVacunacion);
@@ -30,6 +32,8 @@ router.put('/mascotas/update/:mascota_id', mascotaController.updateMascota);
 router.put('/mascotas/delete/:mascota_id', mascotaController.deleteMascota);
 
 router.get('/mascotas/mismascotas/:propietario_id', mascotaController.getMisMascotas);
+
+
 
 // Nueva ruta para actualizar la contraseña
 router.put('/usuarios/update-password', registroController.updatePassword);

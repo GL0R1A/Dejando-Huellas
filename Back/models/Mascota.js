@@ -161,6 +161,16 @@ const Mascota = {
       inner join mascotas m on m.mascota_id = id_mascota
       where v.id_mascota =  ?` , [mascota_id], callback);
   },
+
+  getRecordatorioVacuna: (callback) => {
+    db.query(`select concat(p.nombres, ' ', p.apellidos) as nombrePropietario, u.email, m.nombre as nombreMascota, v.medicamento, v.proxima_fecha_aplicacion, v.nombre_veterinario as nombreVeterinario
+from usuarios u
+inner join propietarios p on u.usuario_id = p.usuario_id
+inner join mascotas m on m.propietario_id = p.propietario_id
+inner join vacunacion v on m.mascota_id = v.id_mascota
+WHERE 
+    v.proxima_fecha_aplicacion = CURDATE() + INTERVAL 0 DAY`,  callback);
+  },
 };
 
 module.exports = Mascota;

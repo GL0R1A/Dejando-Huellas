@@ -14,6 +14,19 @@ exports.getEspeciesAll = (req, res) => {
   });
 };
 
+exports.getRecordatorioVacunas = (req, res) => {
+  
+  Mascota.getRecordatorioVacuna((err, result) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    if (result.length === 0) {
+      return res.status(404).send({ message: `Noy hay proximas vacunas ${result}` });
+    }
+    res.send(result);
+  });
+};
+
 exports.getGenerosAll = (req, res) => {
   Generos.findGeneros((err, result) => {
     if (err) {
@@ -261,3 +274,4 @@ exports.getVacunacion = (req, res) => {
     res.send(result);
   });
 };
+
