@@ -135,48 +135,61 @@ async function obtenerYEnviarRecordatorios() {
   const url = `${api_url}/api/mascotas/recordatorio`; // Ajusta la URL base de tu API
 
   try {
-      // Llamada a la API para obtener los recordatorios
-      const response = await fetch(url);
-      if (!response.ok) {
-          throw new Error('Error en la respuesta de la API');
-      }
+    // Llamada a la API para obtener los recordatorios
+    const response = await fetch(url);
 
-      // Convierte la respuesta a JSON
-      const recordatorios = await response.json();
+    if (response.status === 404) {
+        console.log('No hay próximas vacunas que recordar.');
+        return; // Salir de la función si no hay recordatorios
+    }
 
-      // Itera sobre los recordatorios y envía correos
-      for (const recordatorio of recordatorios) {
-          const { nombrePropietario, email, nombreMascota, medicamento, proxima_fecha_aplicacion, nombreVeterinario } = recordatorio;
+    if (!response.ok) {
+        throw new Error('Error en la respuesta de la API');
+    }
 
-          // Crear el asunto y el cuerpo del correo
-          const subject = `Recordatorio de Vacuna para ${nombreMascota}`;
-          const body = `
-      <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
-        <h2 style="color: #487B68;">Hola ${nombrePropietario},</h2>
-        <p>Te recordamos que la próxima vacuna de <strong>${nombreMascota}</strong> (${medicamento}) será el día <strong>${new Date(proxima_fecha_aplicacion).toLocaleDateString()}</strong>.</p>
-        <p><strong>Veterinario encargado:</strong> ${nombreVeterinario}</p>
-        <p>Por favor, asegúrate de llevar a tu mascota para que reciba la vacuna a tiempo.</p>
-        <p style="margin-top: 20px;">¡Gracias!</p>
-        <footer style="margin-top: 30px; font-size: 0.9em; color: #999;">
-          <hr style="border: none; border-top: 1px solid #ccc;">
-          <p>Este es un mensaje automático. Por favor, no responda a este correo.</p>
-        </footer>
-      </div>
-    `;
-          // Llamar a la función sendEmail para enviar el correo
-          await sendEmail(email, subject, body);
-      }
+    // Convierte la respuesta a JSON
+    const recordatorios = await response.json();
+
+    // Verifica si el array de recordatorios está vacío
+    if (recordatorios.length === 0) {
+        console.log('No hay recordatorios que enviar.');
+        return; // Salir de la función si el array está vacío
+    }
+
+    // Itera sobre los recordatorios y envía correos
+    for (const recordatorio of recordatorios) {
+        const { nombrePropietario, email, nombreMascota, medicamento, proxima_fecha_aplicacion, nombreVeterinario } = recordatorio;
+
+        // Crear el asunto y el cuerpo del correo
+        const subject = `Recordatorio de Vacuna para ${nombreMascota}`;
+        const body = `
+            <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+                <h2 style="color: #487B68;">Hola ${nombrePropietario},</h2>
+                <p>Te recordamos que la próxima vacuna de <strong>${nombreMascota}</strong> (${medicamento}) será el día <strong>${new Date(proxima_fecha_aplicacion).toLocaleDateString()}</strong>.</p>
+                <p><strong>Veterinario encargado:</strong> ${nombreVeterinario}</p>
+                <p>Por favor, asegúrate de llevar a tu mascota para que reciba la vacuna a tiempo.</p>
+                <p style="margin-top: 20px;">¡Gracias!</p>
+                <footer style="margin-top: 30px; font-size: 0.9em; color: #999;">
+                    <hr style="border: none; border-top: 1px solid #ccc;">
+                    <p>Este es un mensaje automático. Por favor, no responda a este correo.</p>
+                </footer>
+            </div>
+        `;
+
+        // Llamar a la función sendEmail para enviar el correo
+        await sendEmail(email, subject, body);
+    }
 
   } catch (error) {
-      console.error(`Error al obtener o enviar recordatorios: ${url}`, error);
+      console.error(`Error al obtener o enviar recordatorios:`, error);
   }
 }
 
 
 // Tarea programada para ejecutarse todos los días a las 00:00
 
-cron.schedule('21 6 * * *', () => {
-  console.log('Ejecutando tarea diaria a las 12:15 PM ');
+cron.schedule('0 22 * * *', () => {
+  console.log('Ejecutando tarea diaria a las 4:00 PM ');
   obtenerYEnviarRecordatorios(); // Llamar a la función que obtiene y envía los correos
 });
 

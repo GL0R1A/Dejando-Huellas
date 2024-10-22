@@ -14,16 +14,15 @@ exports.getEspeciesAll = (req, res) => {
   });
 };
 
-exports.getRecordatorioVacunas = (req, res) => {
-  
+exports.getRecordatorioVacunas = (req, res) => { 
   Mascota.getRecordatorioVacuna((err, result) => {
     if (err) {
-      return res.status(500).send(err);
+      return res.status(500).json({ error: 'Error al obtener los recordatorios de vacunas', detalle: err });
     }
     if (result.length === 0) {
-      return res.status(404).send({ message: `Noy hay proximas vacunas ${result}` });
+      return res.status(404).json({ message: 'No hay próximas vacunas.' });
     }
-    res.send(result);
+    res.status(200).json(result);
   });
 };
 

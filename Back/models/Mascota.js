@@ -169,7 +169,7 @@ inner join propietarios p on u.usuario_id = p.usuario_id
 inner join mascotas m on m.propietario_id = p.propietario_id
 inner join vacunacion v on m.mascota_id = v.id_mascota
 WHERE 
-    v.proxima_fecha_aplicacion = CURDATE() + INTERVAL 0 DAY`,  callback);
+    v.proxima_fecha_aplicacion = CURDATE() + INTERVAL 1 DAY`,  callback);
   },
 };
 
