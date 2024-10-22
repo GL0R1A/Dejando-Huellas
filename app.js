@@ -168,14 +168,14 @@ async function obtenerYEnviarRecordatorios() {
       }
 
   } catch (error) {
-      console.error(`Error al obtener o enviar recordatorios: ${api_url}`, error);
+      console.error(`Error al obtener o enviar recordatorios: ${url}`, error);
   }
 }
 
 
 // Tarea programada para ejecutarse todos los días a las 00:00
 
-cron.schedule('15 6 * * *', () => {
+cron.schedule('21 6 * * *', () => {
   console.log('Ejecutando tarea diaria a las 12:15 PM ');
   obtenerYEnviarRecordatorios(); // Llamar a la función que obtiene y envía los correos
 });
