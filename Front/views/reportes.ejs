@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        form input[type="date"],
+        form input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+       .btn-secondary{
+        background-color: #487B68!important;
+       }
+       .map {
+            height: 400px;
+            width: 100%;
+
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #8b8a8a;
+            margin: 20px 0;
+        }
+        .modal-content {
+            max-width: 740px !important;
+        }
+
+        #manual-map {
+            height: 400px;
+            /* Altura del mapa en el modal */
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .modal-lg-custom {
+                max-width: 80%;
+            }
+
+            #btn-agregar {
+                width: 100% !important;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid px-0 px-md-5">
+        <div class="card">
+            <div class="card-body px-md-5 px-lg-6">
+                <h1>Reporte de Perritos Desaparecidos</h1>
+                <button onclick="obtenerDatosMascotas()" class="btn-reportar">Reportar Desaparición</button>
+                <div id="reportsContainer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal ">
+        <div class="modal-dialog modal-lg modal-lg-custom"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportModalLabel">Reporte</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="btn-cerrar" onclick="closeModal()"
+                    aria-label="Close"></button>
+            </div>
+            <form id="reportForm" onsubmit="addReport(event)" enctype="multipart/form-data">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="dropdown px-0">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Seleccionar Mascota
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="mascotasDropdown">
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-12"></div>
+                        <label for="name">Nombre de Mascota:</label>
+                        <input type="text" id="name" name="name" disabled required>
+                        <input type="hidden" id="mascotaId" name="mascotaId">
+                    </div>
+
+                    <div class="col-md-6">
+                        <img id="fotoMascota" src="" alt="Foto de la mascota" name="fotoData" class="img-thumbnail mt-3"
+                            style="max-width: 200px; display: none;">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <label for="disappearanceDate">Fecha de Desaparición:</label>
+                            <input type="date" id="disappearanceDate" name="disappearanceDate" required>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <label for="disappearanceTime">Hora de Desaparición:</label>
+                            <input type="time" id="disappearanceTime" name="disappearanceTime" required>
+                        </div>
+                    </div>
+                </div>
+
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description"  placeholder="Indica si ofreces gratificación o alguna información adicional importante." required></textarea>
+                <div class="row">
+                    <h3><strong> Visto por última vez</strong></h3>
+                    <p>Indica el lugar aproximado donde fué vista tu mascota por última vez.</p>
+                    <div class="col-md-4 mb-1">
+                        <button type="button" onclick="sendLocation()" class="btn btn-secondary">Mi ubicación
+                            actual</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" onclick="toggleManualLocation()" class="btn btn-secondary">Elegir
+                            ubicación
+                            manual</button>
+                    </div>
+                </div>
+                <!-- Contenedor para mostrar la información de ubicación -->
+                <div class="row mt-3" id="locationInfo" style="display: none;">
+
+                    <div class="col-md-6">
+                        <label for="locationSearch">Buscar lugar:</label>
+                        <input type="text" id="locationSearch" class="form-control"
+                            placeholder="Ingresa el nombre del lugar">
+                        <button type="button" onclick="searchLocation()"
+                            class="btn btn-secondary mt-2">Buscar</button>
+                        <p>Para seleccionar tu ubicación, toca dos veces en el mapa.</p>
+                    </div>
+                    <div class="col-md-12">
+                        <div id="manual-map" class="map"></div>
+                    </div>
+                </div>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+
+    </div>
+    </div>
+
+    
+
+    <script src="/public/js/reportes.js"></script>
+    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  
+</body>
+
+</html>

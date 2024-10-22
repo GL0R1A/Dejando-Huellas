@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Razas de Mascotas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+</head>
+<body>
+  <div class="container-fluid px-0 px-md-5">
+    <div class="card">
+      <div class="card-body px-md-5 px-lg-6">
+    <h1 class="text-center mb-4">Razas de Mascotas</h1>
+    <div class="filter-bar">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary active" id="filterAll">Todos</button>
+        <button type="button" class="btn btn-outline-primary" id="filterDogs">Perros</button>
+        <button type="button" class="btn btn-outline-primary" id="filterCats">Gatos</button>
+      </div>
+      <input type="text" id="searchInput" class="form-control" placeholder="Nombre de raza">
+      <button type="button" class="btn btn-outline-secondary" id="searchButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.344 1.398a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        </svg>
+      </button>
+    </div>
+    <div id="dogCardsContainer" class="row"></div>
+    <nav>
+      <ul class="pagination justify-content-center mt-4">
+        <li class="page-item">
+          <button class="page-link" id="prevPage">Anterior</button>
+        </li>
+        <li class="page-item">
+          <span class="page-link" id="currentPage">1</span>
+        </li>
+        <li class="page-item">
+          <button class="page-link" id="nextPage">Siguiente</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  </div>
+</div>
+</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="petModal" tabindex="-1" aria-labelledby="petModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="petModalLabel">Detalles de la Mascota</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img id="modalPetImage" src="" alt="Imagen de la mascota" class="img-fluid mb-3">
+          <h5 id="modalPetName"></h5>
+          <div id="modalPetDescription"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/public/js/index.js" defer></script>
+</body>
+</html>

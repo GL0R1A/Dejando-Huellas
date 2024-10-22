@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    
+    <button onclick="document.getElementById('reportModal').style.display='block'" class="btn-reportar">Reportar Desaparición</button>
+    <div id="reportsContainer">
+   
+    </div>
+
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <form id="reportForm" onsubmit="addReport(event)" enctype="multipart/form-data">
+                <label for="name">Nombre del Perro:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="lastSeenLocation">Último Lugar Visto:</label>
+                <input type="text" id="lastSeenLocation" name="lastSeenLocation" required>
+
+                <label for="disappearanceDate">Fecha de Desaparición:</label>
+                <input type="date" id="disappearanceDate" name="disappearanceDate" required>
+
+                <label for="disappearanceTime">Hora de Desaparición:</label>
+                <input type="time" id="disappearanceTime" name="disappearanceTime" required>
+
+                <label for="color">Color:</label>
+                <input type="text" id="color" name="color" required>
+
+                <label for="breed">Raza:</label>
+                <input type="text" id="breed" name="breed" required>
+
+                <label for="age">Edad:</label>
+                <input type="text" id="age" name="age" required>
+
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="chronicDisease">Enfermedad Crónica:</label>
+                <input type="text" id="chronicDisease" name="chronicDisease" required>
+
+                <label for="ownerName">Nombre del Dueño:</label>
+                <input type="text" id="ownerName" name="ownerName" required>
+
+                <label for="phoneNumber">Número de Teléfono:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+                <label for="photo">Fotografía:</label>
+                <input type="file" id="photo" name="photo" accept="image/*" onchange="previewImage(event)" required>
+                <img id="imagePreview" alt="Vista previa de la imagen" />
+
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="reportDetailsModal" class="modal">
+        <div class="modal-content" id="reportDetails">
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+    </div>
+
+   
+</body>
+<script src="/public/js/scripts.js"></script>
+<script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imprimir Reporte de Mascota</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .logo,
+        .foto-mascota {
+            height: 70px;
+        }
+
+        .title h1 {
+            display: inline-block;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin: 20px 0;
+        }
+
+        .section-vacunas {
+            margin: 10px 0;
+        }
+        .contenido-section{
+            margin: 10px 30px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        @media print {
+        .row {
+            display: flex; /* Asegúrate de que las filas se comporten como flexibles */
+            flex-wrap: wrap; /* Permitir que los elementos se distribuyan en múltiples líneas si es necesario */
+        }
+
+        .col-md-7, .col-md-3 { 
+            flex: 0 0 auto; /* Mantener el tamaño de las columnas según sea necesario */
+            width: auto; /* Ajustar automáticamente el ancho de las columnas */
+        }
+
+        /* Puedes añadir más reglas para ajustar el estilo de impresión */
+    }
+    </style>
+</head>
+
+<body>
+    <div class="logo-container">
+        <img class="foto-mascota" id="mascotaFoto" alt="Logo">
+        <h1>Reporte de Vacunación</h1>
+        <img class="logo" src="/public/images/logo2.png" alt="Logo">
+    </div>
+
+    <div class="container-datosMascotas ">
+        <div class="section" id="datosMascota">
+            <div class="titulo-section">
+                <h2>Datos de la Mascota</h2>
+            </div>
+            <div class="contenido-section">
+                <div class="row mb-1">
+                    <div class="col-md-7">
+                        <p><strong>Nombre:</strong> <span id="mascotaNombre"></span></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Fecha de Nacimiento:</strong> <span id="mascotaFechaNacimiento"></span></p>
+                    </div>
+                </div>
+    
+                <div class="row mb-1">
+                    <div class="col-md-3">
+                        <p><strong>Especie:</strong> <span id="mascotaEspecie"></span></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Raza:</strong> <span id="mascotaRaza"></span></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Color:</strong> <span id="mascotaColor"></span></p> 
+                    </div>
+                </div>
+    
+                <div class="row mb-1">
+                    <div class="col-md-3">
+                        <p><strong>Peso:</strong> <span id="mascotaPeso"></span></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Género:</strong> <span id="mascotaGenero"></span></p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                    <p><strong>Enfermedad Crónica:</strong> <span id="mascotaEnfermedadCrónica"></span></p>
+                </div>
+            </div>
+           
+           
+           
+        </div>
+
+        <!-- Sección de datos del propietario -->
+        <div class="section" id="datosPropietario">
+            <h2>Datos del Propietario</h2>
+            <div class="contenido-section">
+                <p><strong>Nombre:</strong> <span id="propietarioNombre"></span></p>
+                <p><strong>Residencia:</strong> <span id="propietarioResidencia"></span></p>
+                <p><strong>Teléfono:</strong> <span id="propietarioTelefono"></span></p>
+                <p><strong>Correo:</strong> <span id="propietarioCorreo"></span></p>
+            </div>
+           
+           
+        </div>
+    </div>
+
+    <!-- Sección de vacunaciones -->
+    <div class="section-vacunas">
+        <h2>Vacunaciones</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Medicamento</th>
+                    <th>Dosis</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Aplicación</th>
+                    <th>Próxima Aplicación</th>
+                    <th>Veterinario</th>
+                </tr>
+            </thead>
+            <tbody id="vacunasTableBody">
+                <!-- Aquí se llenarán los datos de las vacunaciones -->
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let id_mascota = window.location.pathname.split('/').pop();
+    
+            // Función para descargar el PDF
+            function descargarPDF() {
+                const element = document.body; // Selecciona el cuerpo de la página para convertirlo a PDF
+                const opt = {
+                    margin:       0.5,
+                    filename:     'ReporteVacunacion.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2 },
+                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+    
+                // Generar el PDF
+                html2pdf().from(element).set(opt).save();
+            }
+    
+            // Función para detectar si es un dispositivo móvil
+            function esDispositivoMovil() {
+                return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            }
+    
+            // Obtener los datos de la mascota
+            fetch(`reporte/${id_mascota}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta de la red');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const mascotaData = data[0];
+                    // Llenar datos de la mascota
+                    document.getElementById('mascotaNombre').innerText = mascotaData.mascota_nombre;
+                    document.getElementById('mascotaFechaNacimiento').innerText = new Date(mascotaData.mascota_fecha_nacimiento).toLocaleDateString();
+                    document.getElementById('mascotaEspecie').innerText = mascotaData.mascota_especie;
+                    document.getElementById('mascotaRaza').innerText = mascotaData.mascota_raza;
+                    document.getElementById('mascotaGenero').innerText = mascotaData.mascota_genero;
+                    document.getElementById('mascotaColor').innerText = mascotaData.mascota_color;
+                    document.getElementById('mascotaPeso').innerText = `${mascotaData.mascota_peso} lbs.`;
+                    document.getElementById('mascotaEnfermedadCrónica').innerText = mascotaData.mascota_enfermedad_cronica;
+    
+                    // Llenar datos del propietario
+                    document.getElementById('propietarioNombre').innerText = mascotaData.propietario_nombre;
+                    document.getElementById('propietarioResidencia').innerText = mascotaData.propietario_residencia;
+                    document.getElementById('propietarioTelefono').innerText = mascotaData.propietario_telefono;
+                    document.getElementById('propietarioCorreo').innerText = mascotaData.propietario_correo;
+    
+                    // Mostrar la foto de la mascota en el lugar deseado
+                    const mascotaFoto = document.getElementById('mascotaFoto');
+                    mascotaFoto.src = mascotaData.mascota_foto;
+                    mascotaFoto.alt = `Foto de ${mascotaData.mascota_nombre}`;
+    
+                    return fetch(`/mias-mascotas/detalles/vacunas/getVacunas/${id_mascota}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener las vacunas');
+                    }
+                    return response.json();
+                })
+                .then(vacunas => {
+                    const vacunasTableBody = document.getElementById('vacunasTableBody');
+                    if (vacunas.length > 0) {
+                        vacunas.forEach(vacuna => {
+                            vacunasTableBody.innerHTML += `
+                                <tr>
+                                    <td>${vacuna.medicamento}</td>
+                                    <td>${vacuna.dosis}</td>
+                                    <td>${vacuna.descripcion_adicional}</td>
+                                    <td>${new Date(vacuna.fecha_aplicacion).toLocaleDateString()}</td>
+                                    <td>${new Date(vacuna.proxima_fecha_aplicacion).toLocaleDateString()}</td>
+                                    <td>${vacuna.nombre_veterinario}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        vacunasTableBody.innerHTML = `<tr><td colspan="7" class="text-center">No hay registro de vacunación para la mascota seleccionada.</td></tr>`;
+                    }
+    
+                    // Descargar el PDF automáticamente si es móvil
+                    if (esDispositivoMovil()) {
+                        descargarPDF();
+                    } else {
+                        // Mostrar el cuadro de impresión en otros dispositivos
+                        window.print();
+                    }
+                })
+                .catch(error => {
+                    console.error('Ha ocurrido un error:', error);
+                });
+     // Redirigir después de imprimir
+     window.addEventListener('afterprint', function() {
+            window.location.href = `/mias-mascotas/detalles/vacunas/${id_mascota}`; // Cambia '/ruta-a-tu-pagina' por la URL deseada
+        });
+        });
+    </script>
+    
+</body>
+
+</html>

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Mascota</title>
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    form input[type=date] {
+      width: 100% !important;
+    }
+
+    form input[type=number] {
+      height: 46px !important;
+      padding: 10px !important;
+    }
+
+    .form-select {
+      height: 46px !important;
+    }
+
+    .modal-content {
+      max-width: 1220px !important;
+    }
+
+    .img-fluid {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .table img {
+      max-width: 100px;
+      height: auto;
+    }
+
+    .map {
+      height: 300px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #manual-map {
+      height: 400px;
+      /* Altura del mapa en el modal */
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .modal-lg-custom {
+        max-width: 80%;
+      }
+
+      #btn-agregar {
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid px-0 px-md-5">
+    <div class="card">
+      <div class="card-body px-md-5 px-lg-6">
+        <div class="row mb-2">
+          <div class="col-md-2">
+            <button type="button" id="btn-agregar" class="btn btn-primary" data-bs-toggle="modal"
+              data-bs-target="#registroModal">Agregar</button>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="table-responsive ">
+            <table id="mascotasTable" class="table table-bordered table-striped responsive">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Nombre</th>
+                  <th>Especie</th>
+                  <th>Raza</th>
+                  <th>Género</th>
+                  <th>Fecha de Nacimiento</th>
+                  <th>Color</th>
+                  <th>Peso</th>
+                  <th>Enfermedad Crónica</th>
+                  <th>Foto</th>
+                </tr>
+              </thead>
+              <tbody id="mascotasTableBody">
+                <!-- Aquí se insertarán las filas dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-lg-custom">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registroModalLabel">Registro de Mascota</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" id="btn-cerrar" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="regForm">
+            <h4>Datos de la Mascota</h4>
+            <div class="row mb-3">
+              <div class="col-md-7">
+                <label for="nombre_mascota" class="form-label">Nombre</label>
+                <input type="text" class="form-control" maxlength="50" id="nombre_mascota" name="nombre_mascota"
+                  required>
+              </div>
+              <div class="col-md-1"></div>
+              <div class="col-md-4">
+                <label for="raza" class="form-label">Raza</label>
+                <input type="text" class="form-control" id="raza" name="raza">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
+              </div>
+              <div class="col-md-1"></div>
+              <div class="col-md-3">
+                <label for="peso" class="form-label">Peso en libras</label>
+                <input type="number" min="0.01" step="0.10" max="99999.99" class="form-control" id="peso" name="peso"
+                  required>
+              </div>
+              <div class="col-md-1"></div>
+              <div class="col-md-4">
+                <label for="color" class="form-label">Color</label>
+                <input type="text" class="form-control" id="color" name="color">
+              </div>
+            </div>
+            <div class="row md-3">
+              <div class="col-md-4">
+                <div class="form-check form-switch">
+                  <label for="flexSwitchCheckDefault" class="form-label">¿Tiene alguna enfermedad crónica?</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="no"
+                      checked>
+                    <label class="form-check-label" for="exampleRadios2">NO</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="si">
+                    <label class="form-check-label" for="exampleRadios1">SI</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <label for="enfermedad_cronica" class="form-label">Describa la enfermedad</label>
+                <input type="text" class="form-control" id="enfermedad_cronica" maxlength="254"
+                  name="enfermedad_cronica">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-7">
+                <div class="row mb-3">
+                  <div class="col-md-5">
+                    <label for="especie" class="form-label">Especie</label>
+                    <select class="form-select" id="especie" name="especie_id" required>
+                      <option value="" selected disabled>Elija una especie</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2"></div>
+                  <div class="col-md-5">
+                    <label for="genero" class="form-label">Género</label>
+                    <select class="form-select" id="genero" name="genero">
+                      <option value="" selected disabled>Elija un género</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-12">
+                    <label for="formFile" class="form-label">Foto</label>
+                    <input class="form-control" type="file" id="formFile" name="foto" accept="image/*"
+                      onchange="uploadImage(event)">
+                    <input type="hidden" id="foto_ruta" name="foto_ruta">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5 px-md-5 px-lg-6">
+                <img id="previewImage" src="/public/images/default.jpg" class="img-fluid rounded mx-auto d-block"
+                  alt="...">
+              </div>
+            </div>
+            <div class="row">
+              <h3><strong> Dirección de vivienda mascota</strong></h3>
+              <p>Esta información es indispensable para ubicar mas fácil la direccion de residencia de la mascota en
+                caso de que se pierda.</p>
+              <div class="col-md-2">
+                <button type="button" onclick="sendLocation()" class="btn btn-primary">Mi ubicación actual</button>
+              </div>
+              <div class="col-md-3">
+                <button type="button" onclick="toggleManualLocation()" class="btn btn-primary">Elegir ubicación
+                  manual</button>
+              </div>
+            </div>
+            <!-- Contenedor para mostrar la información de ubicación -->
+            <div class="row mt-3" id="locationInfo" style="display: none;">
+
+              <div class="col-md-6">
+                <label for="locationSearch">Buscar lugar:</label>
+                <input type="text" id="locationSearch" class="form-control" placeholder="Ingresa el nombre del lugar">
+                <button type="button" onclick="searchLocation()" class="btn btn-primary mt-2">Buscar</button>
+                <p>Para seleccionar tu ubicación, toca dos veces en el mapa.</p>
+              </div>
+              <div class="col-md-12">
+                <div id="manual-map" class="map"></div>
+              </div>
+            </div>
+
+            <div class="row justify-content-center">
+              <div class="col-12 col-md-2">
+                <button type="button" id="btn-guardar" class="btn btn-primary w-100">Guardar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/js/misMascotas.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.3/dist/heic2any.min.js"></script>
+
+  <script>
+    const propietario_Id = <%= propietarioId %>;
+</script>
+  <!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const radioSi = document.getElementById('exampleRadios1');
+      const radioNo = document.getElementById('exampleRadios2');
+      const enfermedadInput = document.getElementById('enfermedad_cronica');
+      const btnAgregar = document.getElementById('btn-agregar');
+      const btnGuardar = document.getElementById('btn-guardar');
+      const btnCerrar = document.getElementById('btn-cerrar');
+
+
+      initializeMap();
+      loadSavedLocations();
+      cargarMascotas();
+
+      btnAgregar.addEventListener('click', () => {
+        cargarEspecies();
+        cargarGeneros();
+
+
+      });
+      btnCerrar.addEventListener('click', () => {
+
+        resetFormAndMap();
+      });
+
+
+
+      btnGuardar.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const fotoRuta = document.getElementById('previewImage').src;
+        let fullPath = document.getElementById('previewImage').src;
+        let url = new URL(fullPath);
+        let localPath = url.pathname; // Esto te dará la ruta relativa sin el dominio //
+
+        const formData = {
+          nombre: document.getElementById('nombre_mascota').value,
+          especie_id: document.getElementById('especie').value,
+          raza: document.getElementById('raza').value,
+          genero_id: document.getElementById('genero').value,
+          fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+          color: document.getElementById('color').value,
+          peso: document.getElementById('peso').value,
+          foto: localPath,
+          enfermedad_cronica: document.getElementById('enfermedad_cronica').value,
+          propietario_id: <%= propietarioId %> // Usar el propietarioId desde la sesión
+    };
+
+      try {
+        const response = await fetch('mis-mascotas/registrar', { // Cambia la URL si es necesario
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          toastr.success('Mascota registrada exitosamente');
+
+
+          // Cerrar el modal
+          const modalElement = document.getElementById('registroModal');
+          const modal = bootstrap.Modal.getInstance(modalElement);
+          modal.hide();
+
+          // Limpiar el formulario
+          document.getElementById('regForm').reset();
+          document.getElementById('previewImage').src = '/public/images/default.jpg'; // Restablecer la imagen a la predeterminada
+
+          // Forzar eliminación del backdrop
+          document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+
+          window.location.href = '/mias-mascotas';
+
+        } else {
+          const errorResult = await response.json();
+          toastr.error('Error al registrar la mascota: ' + errorResult.message);
+        }
+      } catch (error) {
+        toastr.error('Error de conexión con la API');
+      }
+    });
+
+    function toggleEnfermedadInput() {
+      if (radioSi.checked) {
+        enfermedadInput.disabled = false;
+        enfermedadInput.setAttribute('required', '');
+      } else if (radioNo.checked) {
+        enfermedadInput.disabled = true;
+        enfermedadInput.value = '';
+        enfermedadInput.removeAttribute('required');
+      }
+    }
+
+    toggleEnfermedadInput();
+    radioSi.addEventListener('change', toggleEnfermedadInput);
+    radioNo.addEventListener('change', toggleEnfermedadInput);
+    });
+
+    function cargarEspecies() {
+      fetch('/mis-mascotas/especies')
+        .then(response => response.json())
+        .then(data => {
+          const especieSelect = document.getElementById('especie');
+          especieSelect.innerHTML = '<option value="" selected disabled>Elija una especie</option>';
+          data.forEach(especie => {
+            let option = document.createElement('option');
+            option.value = especie.especie_id;
+            option.textContent = especie.nombre_especie;
+            especieSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error al cargar las especies:', error));
+    }
+
+    function cargarGeneros() {
+      fetch('/mis-mascotas/generos')
+        .then(response => response.json())
+        .then(data => {
+          const generoSelect = document.getElementById('genero');
+          generoSelect.innerHTML = '<option value="" selected disabled>Elija un género</option>';
+          data.forEach(genero => {
+            let option = document.createElement('option');
+            option.value = genero.genero_id;
+            option.textContent = genero.nombre_genero;
+            generoSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error al cargar los generos:', error));
+    }
+
+
+    //logica mapas
+    let manualMap, manualMarker;
+    const guatemalaCoords = [14.6349, -90.5069]; // Coordenadas centrales de Guatemala
+
+    function sendLocation() {
+      resetFormAndMap();
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        alert("Geolocalización no es soportada por este navegador.");
+      }
+    }
+    function toggleManualLocation() {
+      resetFormAndMap();
+      const locationInfo = document.getElementById('locationInfo');
+      if (locationInfo.style.display === 'none') {
+        locationInfo.style.display = 'block';
+        initializeMap();
+      } else {
+        locationInfo.style.display = 'none';
+      }
+    }
+    function initializeMap() {
+      // Verifica si el mapa ya fue inicializado
+      if (!manualMap) {
+        // Inicializar el mapa centrado en Guatemala si no existe
+        manualMap = L.map('manual-map').setView(guatemalaCoords, 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(manualMap);
+
+        // Mueve el mapa hacia abajo 50 píxeles
+        manualMap.panBy([0, -110]);
+
+        manualMap.on('dblclick', function (e) {
+          const userConfirmed = confirm("¿Desea agregar un punto en esta ubicación?");
+          if (userConfirmed) {
+            if (manualMarker) {
+              manualMap.removeLayer(manualMarker);
+            }
+
+            // Crear el marcador y agregarlo al mapa
+            manualMarker = L.marker(e.latlng).addTo(manualMap);
+
+
+            const placeName = prompt("Ingresa el nombre del lugar:");
+            if (placeName) {
+              // Vincular un popup con el nombre del lugar al marcador
+              manualMarker.bindPopup(placeName).openPopup();
+              // Solicitar al usuario que ingrese el nombre del lugar
+              const descripcion = prompt("Ingresa una descripcion más precisa del lugar:");
+              manualMarker.bindPopup(`<strong>${placeName}</strong><br>${descripcion}`).openPopup();
+
+
+              // Escuchar el evento popupclose para ejecutar una acción cuando se cierre el popup
+              manualMarker.on('popupclose', function () {
+                console.log("El popup de 'Ubicación Manual' se ha cerrado.");
+                // Aquí puedes agregar cualquier acción que desees ejecutar cuando se cierre el popup
+                resetFormAndMap();
+              });
+
+
+
+              // Guardar la ubicación y el nombre en el localStorage
+              saveManualLocation(e.latlng.lat, e.latlng.lng, placeName, descripcion);
+            }
+
+
+          }
+        });
+      } else {
+        manualMap.setView(guatemalaCoords, 7); // Recentrar el mapa en Guatemala
+        manualMap.panBy([0, -110]); // Mueve el mapa hacia abajo 50 píxeles
+        manualMap.invalidateSize(); // Ajustar el tamaño del mapa
+      }
+    }
+    function showPosition(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Solicitar al usuario que ingrese el nombre del lugar
+      const placeName = prompt("Ingresa el nombre del lugar para tu ubicación actual:");
+
+      // Solicitar al usuario que ingrese una descripción del lugar
+      const description = prompt("Ingresa una descripción para tu ubicación actual:");
+
+      if (placeName && description) {
+        // Crear un objeto con las coordenadas, nombre del lugar y descripción
+        const locationData = {
+          latitude: latitude,
+          longitude: longitude,
+          name: placeName,
+          description: description
+        };
+
+        // Guardar en localStorage
+        const locations = JSON.parse(localStorage.getItem('locations')) || [];
+        locations.push(locationData);
+        localStorage.setItem('locations', JSON.stringify(locations));
+
+        console.log(locationData); // Mostrar en consola para verificación
+
+        // Mostrar el mapa e inicializarlo si es necesario
+        const locationInfo = document.getElementById('locationInfo');
+        locationInfo.style.display = 'block';
+        initializeMap();
+
+        // Centrar el mapa en la ubicación actual del usuario
+        manualMap.setView([latitude, longitude], 15);
+
+        // Añadir un marcador al mapa con un popup que muestra nombre y descripción
+        if (manualMarker) {
+          manualMap.removeLayer(manualMarker);
+        }
+        manualMarker = L.marker([latitude, longitude]).addTo(manualMap);
+        manualMarker.bindPopup(`<strong>${placeName}</strong><br>${description}`).openPopup();
+
+        manualMarker.on('popupclose', function () {
+          resetFormAndMap();
+        });
+
+        // Deshabilitar el campo de búsqueda y botón
+        document.getElementById('locationSearch').disabled = true;
+        document.querySelector("button[onclick='searchLocation()']").disabled = true;
+
+        // // Enviar al servidor si es necesario
+        // fetch('/api/location', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(locationData)
+        // });
+      } else {
+        alert("Se requiere ingresar un nombre y una descripción para la ubicación.");
+      }
+    }
+
+
+    function showError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("Permiso denegado por el usuario.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("Información de ubicación no disponible.");
+          break;
+        case error.TIMEOUT:
+          alert("El tiempo de la solicitud ha expirado.");
+          break;
+        case error.UNKNOWN_ERROR:
+          alert("Ocurrió un error desconocido.");
+          break;
+      }
+    }
+    function resetFormAndMap() {
+      // Oculta el contenedor de información de ubicación
+      const locationInfo = document.getElementById('locationInfo');
+      locationInfo.style.display = 'none';
+      // Eliminar marcador si existe
+      if (manualMarker) {
+        manualMap.removeLayer(manualMarker);
+        manualMarker = null;
+      }
+
+      // Resetear el mapa a la vista inicial (centro en Guatemala)
+      manualMap.setView(guatemalaCoords, 7);
+
+      // Limpiar campos de búsqueda y habilitarlos
+      document.getElementById('locationSearch').value = '';
+      document.getElementById('locationSearch').disabled = false;
+      document.querySelector("button[onclick='searchLocation()']").disabled = false;
+
+      // Limpiar `localStorage` si es necesario
+      // Si deseas mantener la funcionalidad de guardar en `localStorage`,
+      // comenta o ajusta esta línea según sea necesario
+      localStorage.removeItem('locations');
+
+      // Ocultar el popup si está abierto
+      if (manualMarker) {
+        manualMarker.closePopup();
+      }
+
+    }
+
+    function searchLocation() {
+      const locationName = document.getElementById('locationSearch').value;
+      if (locationName) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}`;
+
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            if (data.length > 0) {
+              const { lat, lon } = data[0];
+              manualMap.setView([lat, lon], 13);
+            } else {
+              alert("No se encontró la ubicación. Inténtalo de nuevo.");
+            }
+          })
+          .catch(error => {
+            console.error('Error al buscar la ubicación:', error);
+            alert("Ocurrió un error al buscar la ubicación.");
+          });
+      } else {
+        alert("Por favor, ingresa el nombre de un lugar para buscar.");
+      }
+    }
+
+    function saveManualLocation(latitude, longitude, name, descripcion) {
+      const locationData = {
+        latitude: latitude,
+        longitude: longitude,
+        name: name,
+        descripcion: descripcion
+      };
+
+      // Obtiene las ubicaciones almacenadas previamente o inicializa una nueva lista
+      const locations = JSON.parse(localStorage.getItem('locations')) || [];
+      locations.push(locationData);
+
+      // Guarda la lista actualizada de ubicaciones en localStorage
+      localStorage.setItem('locations', JSON.stringify(locations));
+
+      console.log(locationData); // Mostrar en consola para verificación
+
+      // // Enviar al servidor, no llamar a addLocationToPage aquí
+      // fetch('/api/location', {
+      //     method: 'POST',
+      //     headers: {
+      //         'Content-Type': 'application/json'
+      //     },
+      //     body: JSON.stringify({ latitude, longitude })
+      // });
+    }
+    function loadSavedLocations() {
+      const locations = JSON.parse(localStorage.getItem('locations')) || [];
+      locations.forEach(location => {
+        const marker = L.marker([location.latitude, location.longitude]).addTo(manualMap);
+        marker.bindPopup(location.name).openPopup(); // Mostrar el nombre del lugar
+      });
+    }
+
+
+
+    async function uploadImage(event) {
+      const fileInput = event.target;
+      const file = fileInput.files[0];
+      const formData = new FormData();
+
+      if (!file) {
+        toastr.error('No se seleccionó ningún archivo');
+        return null;
+      }
+
+      let processedFile = file;
+
+      // Verifica si el archivo es HEIC o HEIF
+      if (file.type === "image/heic" || file.type === "image/heif") {
+        try {
+          const blob = await heic2any({
+            blob: file,
+            toType: "image/jpeg",
+          });
+
+          processedFile = new File([blob], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" });
+
+        } catch (error) {
+          console.error('Error al convertir la imagen:', error);
+          toastr.error('Error al convertir la imagen HEIC');
+          return null;
+        }
+      }
+
+      // Agrega el archivo (convertido o no) al FormData
+      formData.append('foto', processedFile);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const previewImage = document.getElementById('previewImage');
+          previewImage.src = data.filePath;
+          return data.filePath;
+        } else {
+          toastr.error('Error al subir la imagen');
+          return null;
+        }
+      } catch (error) {
+        console.error('Error al subir la imagen:', error);
+        toastr.error('Error al subir la imagen');
+        return null;
+      }
+    }
+
+
+    function cargarMascotas() {
+      fetch('mis-mascotas/mis-mascotas')
+        .then(response => response.json())
+        .then(data => {
+          const mascotasTableBody = document.getElementById('mascotasTableBody');
+          mascotasTableBody.innerHTML = ''; // Limpiar cualquier contenido previo
+
+          if (data.length === 0) {
+            mascotasTableBody.innerHTML = '<tr><td colspan="9" class="text-center">No tienes mascotas registradas.</td></tr>';
+          } else {
+            data.forEach(mascota => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                          <td>
+                            <button class="btn btn-secondary btn-detalles" data-id="${mascota.mascota_id}">Detalles</button>
+                        </td>
+                        <td>${mascota.nombre}</td>
+                        <td>${mascota.nombre_especie}</td>
+                        <td>${mascota.raza}</td>
+                        <td>${mascota.nombre_genero}</td>
+                        <td>${new Date(mascota.fecha_nacimiento).toLocaleDateString()}</td>
+                        <td>${mascota.color}</td>
+                        <td>${mascota.peso} lbs.</td>
+                        <td>${mascota.enfermedad_cronica || 'N/A'}</td>
+                        <td><img src="${mascota.foto}" alt="${mascota.nombre}" class="img-fluid"></td>
+                    `;
+              mascotasTableBody.appendChild(row);
+            });
+            // Agregar eventos de clic a los botones de detalles
+            document.querySelectorAll('.btn-detalles').forEach(button => {
+              button.addEventListener('click', function () {
+                const mascotaId = this.getAttribute('data-id');
+                const mascotaSeleccionada = data.find(m => m.mascota_id == mascotaId);
+
+                // Guardar la mascota seleccionada en sessionStorage
+                sessionStorage.setItem('mascotaSeleccionada', JSON.stringify(mascotaSeleccionada));
+
+                // Redirigir a la vista de detalles
+                window.location.href = `/mias-mascotas/detalles/${mascotaId}`;
+              });
+            });
+
+            // Inicializar DataTables
+            $('#mascotasTable').DataTable({
+              responsive: true,
+              language: {
+                url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
+              }
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error al cargar las mascotas:', error);
+          const mascotasTableBody = document.getElementById('mascotasTableBody');
+          mascotasTableBody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">Error al cargar las mascotas.</td></tr>';
+        });
+    }
+  </script> -->
+</body>
+
+</html>

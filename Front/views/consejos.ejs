@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuidado y Bienestar de las Mascotas</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        /* Estilos para los artículos de video */
+        article {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Estilos para los componentes lite-youtube */
+        lite-youtube {
+            width: 100%;
+            max-width: 100%; /* Ajusta para que ocupe todo el ancho del contenedor */
+            aspect-ratio: 16 / 9; /* Mantiene la proporción 16:9 del video */
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        /* Estilo para las tarjetas de blog */
+        .card-blog {
+            transition: transform 0.2s;
+            height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+        }
+
+        .card-blog:hover {
+            transform: scale(1.02);
+        }
+
+        /* Ajustes adicionales para el modal */
+        .modal-body {
+            white-space: pre-wrap; /* Preserva los saltos de línea */
+        }
+        .btn-custom{
+          background-color: #487B68;
+        }
+        .btn-custom:hover{
+          background-color: #BC9A7E !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid px-0 px-md-5 my-4">
+        <div class="card">
+            <div class="card-body px-md-5 px-lg-6">
+                <h1 class="text-center">Cuidado y Bienestar de las Mascotas: Una Guía Esencial</h1>
+                <p class="mt-3">
+                    El cuidado de las mascotas es una responsabilidad importante para los dueños de perros y gatos. No solo se trata de proporcionarles amor y compañía, sino también de asegurarse de que sus necesidades físicas y emocionales estén satisfechas.
+                </p>
+
+                <!-- Sección de Entradas de Blog -->
+                <h2 class="mt-5">Consejos</h2>
+                <div class="row">
+                    <% if (entradas && entradas.length > 0) { %>
+                        <% entradas.forEach(entrada => { %>
+                            <div class="col-md-4 mb-4">
+                                <div class="card card-blog">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3><%= entrada.titulo %></h3>
+                                        <p class="flex-grow-1"><%= entrada.contenido.substring(0, 100) + '...' %></p> <!-- Resumen -->
+                                        <button class="btn btn-info mt-3 btn-custom" data-bs-toggle="modal" data-bs-target="#modalEntrada" data-titulo="<%= entrada.titulo %>" data-contenido="<%= entrada.contenido %>">
+                                            Leer más
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No hay entradas disponibles en este momento.</p>
+                    <% } %>
+                </div>
+
+                <!-- Sección de Galería de Videos -->
+                <h2 class="mt-5">Galería de Videos sobre Cuidado de Mascotas</h2>
+                <div class="row">
+                    <% if (videos && videos.length > 0) { %>
+                        <% videos.forEach(video => { %>
+                            <div class="col-md-4 mb-4">
+                                <article>
+                                    <h5><%= video.titulo %></h5>
+                                    <lite-youtube videoid="<%= video.videoid %>"></lite-youtube>
+                                </article>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No hay videos disponibles en este momento.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar el contenido completo de la entrada de blog -->
+    <div class="modal fade" id="modalEntrada" tabindex="-1" aria-labelledby="modalEntradaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEntradaLabel">Título de la Entrada</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalContenido">Contenido completo de la entrada.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap y Lite-Youtube -->
+    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1.5.0/lite-youtube.js"></script>
+    <script>
+        // Script para manejar el modal de Entradas de Blog
+        const modalEntrada = document.getElementById('modalEntrada');
+        modalEntrada.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget;
+            const titulo = button.getAttribute('data-titulo');
+            const contenido = button.getAttribute('data-contenido');
+
+            const modalTitle = modalEntrada.querySelector('.modal-title');
+            const modalBody = modalEntrada.querySelector('#modalContenido');
+
+            modalTitle.textContent = titulo;
+            modalBody.textContent = contenido;
+        });
+    </script>
+</body>
+</html>

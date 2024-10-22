@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Aparicion</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        body {
+            background-color: #BC9A7E;
+            /* Color de fondo principal */
+        }
+
+        form input[type=date] {
+            width: 100% !important;
+        }
+
+        form input[type=number] {
+            height: 46px !important;
+            padding: 10px !important;
+        }
+
+        .form-select {
+            height: 46px !important;
+        }
+
+        .modal-content {
+            max-width: 1220px !important;
+        }
+
+        .mascota-info {
+            padding: 20px;
+        }
+
+        .mascota-info img {
+            max-width: 300px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+
+        .card-custom {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            background-color: #ffffff;
+            /* Fondo blanco para la tarjeta */
+        }
+
+        .card-header-custom {
+            background-color: #487B68;
+            color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            text-align: center;
+        }
+
+        .owner-info {
+            text-align: center;
+            background-color: #487B68;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .contact-info {
+            text-align: center;
+            background-color: #487B68;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .text-large {
+            font-size: 1.3em;
+        }
+
+        .text-name {
+            font-size: 5em;
+        }
+
+        .text-name-owner {
+            font-size: 1.5em;
+        }
+
+        .text-especie {
+            font-size: 1.7em;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        #contact-wa,
+        #contact-mail {
+            background-color: #487B68;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 10px;
+            display: inline-block;
+            text-align: left;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 10px;
+
+        }
+
+        .icon-space {
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        #loading-spinner {
+            display: none;
+            /* Inicialmente oculto */
+            margin-top: 50px;
+        }
+
+        .leaflet-popup-close-button {
+            display: none;
+            /* Oculta el botón de cerrar del popup */
+        }
+
+        .map {
+            height: 400px;
+            width: 100%;
+
+        }
+
+        .map_desaparicion {
+            height: 400px;
+            width: 100%;
+
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #8b8a8a;
+            margin: 20px 0;
+        }
+
+
+
+        #manual-map {
+            height: 400px;
+            /* Altura del mapa en el modal */
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .modal-lg-custom {
+                max-width: 80%;
+            }
+
+            #btn-agregar {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    </div>
+    <div class="container mt-5">
+        <div id="loading-spinner" class="text-center">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+        <div class="card card-custom">
+            <div class="owner-info">
+                <H2 class="mb-0">MASCOTA ENCONTRADA</H2>
+                <strong><span >A continuacion se te presenta el informe que te enviaron</span></strong>
+
+            </div>
+            <div class="card-body mascota-info">
+                <img id="foto" src="" alt="Foto de la mascota">
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="row text-center">
+                            <p class="text-name pb-0"><strong id="nombre"></strong></p>
+                        </div>
+                        <div class="row text-center">
+                            <p class="text-especie"><span id="especie"></span></p>
+                        </div>
+                    
+                    </div>
+
+                </div>
+
+                <hr>
+                <div class="row-12 info-contacto">
+                    <div class="col md-12 text-center mt-2">
+                        <h4>¡Hola, encontré a tu mascota!</h4>
+                        <h3>Contáctame</h3>
+                    </div>
+                    <div class="col-12 col-md-10 offset-md-1">
+                        <p class="text-large"><strong>Nombre:</strong> <span id="nombre_reporta"></span></p>
+                        <p class="text-large"><strong>Teléfono:</strong> <span id="telefono_reporta"></span></p>
+                        <p class="text-large"><strong>Correo:</strong> <span id="correo_reporta"></span></p>
+                        <p class="text-large"><strong>Comentario:</strong> <span id="comentario_reporta"></span></p>
+
+                    </div>
+                    <div class=" col-md-10 offset-md-1">
+                        <a id="contact-wa" href="" target="_blank">
+                            <span class="icon-space">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-brand-whatsapp">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9" />
+                                    <path
+                                        d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1" />
+                                </svg>
+                            </span>
+                            Whatsapp
+                        </a>
+                        <a id="contact-mail" href="" target="_blank">
+                            <span class="icon-space">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
+                                    <path d="M3 7l9 6l9 -6" />
+                                  </svg>
+                            </span>
+                            Correo
+                        </a>
+                       
+                    </div>
+
+
+
+                </div>
+
+                <hr>
+                <div class="col md-12 text-center mt-2">
+                    <h2>Esta es mi ubicación</h2>
+                </div>
+
+                <div class="col md-12 p-4">
+                    <div id="map" class="map"></div>
+                </div>
+             
+            </div>
+
+
+        </div>
+    </div>
+   
+
+    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const identificador_qr = window.location.pathname.split('/').pop();
+            const spinner = document.getElementById('loading-spinner');
+            const card = document.querySelector('.card');
+           
+            let mascota;
+         
+            // Mostrar el spinner y ocultar la tarjeta
+            spinner.style.display = 'block';
+            card.style.display = 'none';
+            fetch(`/info/infoReporteAparicion/${identificador_qr}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    mascota = data[0]; // Acceder a la primera posición del arreglo
+                  console.log(mascota)
+                    if (mascota) {
+                       
+                        // Mostrar fecha de nacimiento y edad
+                        const mensaje = 'Hola, vi que encontraste a mi mascota '
+                        const whatsappLink = `https://api.whatsapp.com/send/?phone=${mascota.telefono_reporta}&text=${mensaje}${mascota.nombre}`;
+                        const mailLink = `mailto:${mascota.correo_reporta}?subject=Encontraste mi mascota&body=Hola, ${mascota.nombre_reporta} vi que encontraste a mi mascota ${mascota.nombre} `
+                        const fechaNacimientoFormateada = new Date(mascota.fecha_reporta).toLocaleDateString();
+                        document.getElementById('nombre_reporta').textContent = mascota.nombre_reporta;
+                        document.getElementById('telefono_reporta').textContent = mascota.telefono_reporta;
+                        document.getElementById('correo_reporta').textContent = mascota.correo_reporta;
+                        document.getElementById('comentario_reporta').textContent = mascota.descripcion_reporta;
+                        document.getElementById('nombre').textContent = mascota.nombre;
+                        document.getElementById('contact-wa').href = whatsappLink;
+                        document.getElementById('contact-mail').href = mailLink;
+                      
+                        // document.getElementById('correo').textContent = mascota.correo_reporta;
+                        document.getElementById('foto').src = mascota.foto;
+
+                        // Ocultar el spinner y mostrar la tarjeta
+                        spinner.style.display = 'none';
+                        card.style.display = 'block';
+                        // Convertir latitud y longitud a números
+                        const latitud = parseFloat(mascota.latitud);
+                        const longitud = parseFloat(mascota.longitud);
+
+                        // Inicializar el mapa centrado en las coordenadas de la mascota
+                        const map = L.map('map').setView([latitud, longitud], 15); // El número 15 es el nivel de zoom
+
+
+                        // Agregar los mosaicos de OpenStreetMap
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+
+                        // Agregar un marcador en las coordenadas de la mascota
+                        const marker = L.marker([latitud, longitud]).addTo(map);
+
+                        // Vincular un popup al marcador con el nombre y la descripción del lugar
+                        marker.bindPopup(`<strong>${mascota.nombre_ubicacion}</strong><br>${mascota.descripcion_adicional}`).openPopup();
+                        // Invalidar tamaño del mapa para asegurar su renderización correcta
+                        map.invalidateSize();
+                    } else {
+                        document.body.innerHTML = '<p>Reporte no encontrado.</p>';
+                    }
+
+
+
+                })
+                .catch(error => {
+                    console.error('Error al obtener la mascota:', error);
+                    document.body.innerHTML = '<p>Error al cargar la información de la mascota.</p>';
+                });
+      
+            });
+        // Lógica de mapas
+        // let manualMap, manualMarker;
+        // const guatemalaCoords = [14.6349, -90.5069];
+
+        // Variables globales para latitud, longitud, nombre y descripción
+        // let latitude, longitude, placeName, description;
+     
+        // function resetFormAndMap() {
+        //     const locationInfo = document.getElementById('locationInfo');
+        //     locationInfo.style.display = 'none';
+        //     if (manualMarker) {
+        //         manualMap.removeLayer(manualMarker);
+        //         manualMarker = null;
+        //     }
+        //     manualMap.setView(guatemalaCoords, 7);
+        //     document.getElementById('locationSearch').value = '';
+        //     document.getElementById('locationSearch').disabled = false;
+        //     document.querySelector("button[onclick='searchLocation()']").disabled = false;
+        //     localStorage.removeItem('locations');
+        // }
+       
+      
+
+        // function loadSavedLocations() {
+        //     const locations = JSON.parse(localStorage.getItem('locations')) || [];
+        //     locations.forEach(location => {
+        //         const marker = L.marker([location.latitude, location.longitude]).addTo(manualMap);
+        //         marker.bindPopup(location.name).openPopup();
+        //     });
+        // }
+   
+
+
+    </script>
+</body>
+
+</html>
