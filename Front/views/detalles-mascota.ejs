@@ -666,12 +666,13 @@
                 var zoomedImage = document.getElementById('zoomedImage');
                 zoomedImage.style.display = 'none';
             });
-
+            
             function generaQrConLogo(identificador_qr, logoUrl) {
+                const dominio = "<%= dominio %>";
                 const qrCode = new QRCodeStyling({
                     width: 300,
                     height: 300,
-                    data: `info/${identificador_qr}`,
+                    data: `${dominio}info/${identificador_qr}`,
                     image: logoUrl,  // URL del logo
                     dotsOptions: {
                         color: "#000",   // Color de los puntos del QR
