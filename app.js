@@ -188,7 +188,7 @@ async function obtenerYEnviarRecordatorios() {
 
 // Tarea programada para ejecutarse todos los días a las 00:00
 
-cron.schedule('0 22 * * *', () => {
+cron.schedule('30 0 * * *', () => {
   console.log('Ejecutando tarea diaria a las 4:00 PM');
   obtenerYEnviarRecordatorios(); // Llamar a la función que obtiene y envía los correos
 });
