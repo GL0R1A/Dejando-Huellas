@@ -81,7 +81,7 @@ app.post('/upload', upload.single('foto'), (req, res) => {
 // Configurar rutas de la aplicación (protegidas por autenticación)
 app.use('/api', RegistroRoutes); // Rutas de registro
 app.use('/mis-mascotas', ensureAuthenticated, mascotaRoutes); // Rutas de mascotas protegidas
-app.use('/info', ensureAuthenticated, reportRoutes); // Rutas de reportes protegidas
+app.use('/info', reportRoutes); // Rutas de reportes protegidas
 app.use('/users', userRoutes); // Rutas de usuarios
 app.use('/', ensureAuthenticated, mascotaRoutes); // Ruta protegida para mascotas
 
