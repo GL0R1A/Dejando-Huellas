@@ -303,7 +303,7 @@ exports.showConsejos = (req, res) => {
   // Definir los videos manualmente
   const videos = [
     {
-        titulo: "Alimentacion de tu mascota",
+        titulo: "Alimentación de tu mascota",
         ruta: "public/videos/ALIMENTACION.mp4"
     },
     {
