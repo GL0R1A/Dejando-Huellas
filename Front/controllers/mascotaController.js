@@ -302,31 +302,16 @@ exports.showConsejos = (req, res) => {
 
   // Definir los videos manualmente
   const videos = [
-      {
-          titulo: "Tengo una mascota ¿Cómo cuidar a nuestras mascotas?",
-          videoid: "z6qn2YzE54M"
-      },
-      {
-          titulo: "Cuidado de mascotas, La Educación Sana",
-          videoid: "T-UPNLaWSKU" // Reemplaza con el ID real del video
-      },
-      {
-          titulo: "7 CONSEJOS para CUIDAR la SALUD de tu PERRO",
-          videoid: "TbgB5zH8_3E" // Reemplaza con el ID real del video
-      },
-      {
-          titulo: "Conoce 5 responsabilidades de tener una mascota",
-          videoid: "dX4yefV2H_A" // Reemplaza con el ID real del video
-      },
-      {
-          titulo: "Cómo ayudar a un gato callejero: Consejos para rescatar, cuidar y adoptar",
-          videoid: "cmaN3kXbv7s" // Reemplaza con el ID real del video
-      },
-      {
-          titulo: "Tenencia responsable: los cuidados básicos que debe tener con una mascota",
-          videoid: "618Fk4PhnY4" // Reemplaza con el ID real del video
-      }
-  ];
+    {
+        titulo: "Alimentacion de tu mascota",
+        ruta: "public/videos/ALIMENTACION.mp4"
+    },
+    {
+        titulo: "Salud de tu mascota",
+        ruta: "public/videos/SALUD.mp4"
+    },
+    
+];
 
   // Renderiza la vista y pasa las entradas y videos
   res.render('consejos', { entradas, videos });
